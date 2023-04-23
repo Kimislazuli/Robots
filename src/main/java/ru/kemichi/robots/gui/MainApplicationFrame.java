@@ -19,6 +19,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import ru.kemichi.robots.log.Logger;
+import ru.kemichi.robots.models.Robot;
+import ru.kemichi.robots.views.GameView;
 
 /**
  * Что требуется сделать:
