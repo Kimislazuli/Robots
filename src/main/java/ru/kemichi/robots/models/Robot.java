@@ -1,44 +1,56 @@
 package ru.kemichi.robots.models;
 
-import java.awt.*;
+import ru.kemichi.robots.utility.DoublePoint;
 
-public class Robot {
-    private volatile double robotPositionX = 100;
-    private volatile double robotPositionY = 100;
+import java.awt.*;
+import java.util.Observable;
+
+public class Robot extends Observable {
+    private volatile DoublePoint robotPosition = new DoublePoint(100, 100);
     private volatile double robotDirection = 0;
 
-    private volatile int targetPositionX = 150;
-    private volatile int targetPositionY = 100;
+
+    private volatile Point targetPosition = new Point(150, 100);
 
     private static final double maxVelocity = 0.1;
     private static final double maxAngularVelocity = 0.001;
 
-    private static double distance(double x1, double y1, double x2, double y2) {
-        double diffX = x1 - x2;
-        double diffY = y1 - y2;
+    public DoublePoint getRobotPosition() {
+        return robotPosition;
+    }
+
+    public double getRobotDirection() {
+        return robotDirection;
+    }
+
+    public Point getTargetPosition() {
+        return targetPosition;
+    }
+
+    private static double distance(Point target, DoublePoint robot) {
+        double diffX = target.getX() - robot.getX();
+        double diffY = target.getY() - robot.getY();
         return Math.sqrt(diffX * diffX + diffY * diffY);
     }
 
-    private static double angleTo(double fromX, double fromY, double toX, double toY) {
-        double diffX = toX - fromX;
-        double diffY = toY - fromY;
+    private static double angleTo(Point target, DoublePoint robot) {
+        double diffX = target.getX() - robot.getX();
+        double diffY = target.getY() - robot.getY();
 
         return asNormalizedRadians(Math.atan2(diffY, diffX));
     }
 
     public void setTargetPosition(Point p) {
-        targetPositionX = p.x;
-        targetPositionY = p.y;
+        targetPosition = p;
     }
 
     public void onModelUpdateEvent() {
-        double distance = distance(targetPositionX, targetPositionY,
-                robotPositionX, robotPositionY);
+        double distance = distance(targetPosition, robotPosition);
         if (distance < 0.5) {
             return;
         }
         double velocity = maxVelocity;
-        double angleToTarget = angleTo(robotPositionX, robotPositionY, targetPositionX, targetPositionY);
+        double angleToTarget = angleTo(targetPosition, robotPosition);
         double angularVelocity = 0;
         if (angleToTarget > robotDirection) {
             angularVelocity = maxAngularVelocity;
@@ -69,20 +81,20 @@ public class Robot {
     private void moveRobot(double velocity, double angularVelocity, double duration) {
         velocity = applyLimits(velocity, 0, maxVelocity);
         angularVelocity = applyLimits(angularVelocity, -maxAngularVelocity, maxAngularVelocity);
-        double newX = robotPositionX + velocity / angularVelocity *
+        double newX = robotPosition.getX() + velocity / angularVelocity *
                 (Math.sin(robotDirection + angularVelocity * duration) -
                         Math.sin(robotDirection));
         if (!Double.isFinite(newX)) {
-            newX = robotPositionX + velocity * duration * Math.cos(robotDirection);
+            newX = robotPosition.getX() + velocity * duration * Math.cos(robotDirection);
         }
-        double newY = robotPositionY - velocity / angularVelocity *
+        double newY = robotPosition.getY() - velocity / angularVelocity *
                 (Math.cos(robotDirection + angularVelocity * duration) -
                         Math.cos(robotDirection));
         if (!Double.isFinite(newY)) {
-            newY = robotPositionY + velocity * duration * Math.sin(robotDirection);
+            newY = robotPosition.getY() + velocity * duration * Math.sin(robotDirection);
         }
-        robotPositionX = newX;
-        robotPositionY = newY;
+        robotPosition.setX(newX);
+        robotPosition.setY(newY);
         double newDirection = asNormalizedRadians(robotDirection + angularVelocity * duration);
         robotDirection = newDirection;
     }

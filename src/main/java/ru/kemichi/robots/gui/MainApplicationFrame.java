@@ -19,6 +19,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import ru.kemichi.robots.log.Logger;
+import ru.kemichi.robots.models.Robot;
 
 /**
  * Что требуется сделать:
@@ -29,6 +30,7 @@ import ru.kemichi.robots.log.Logger;
 public class MainApplicationFrame extends JFrame {
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final ResourceBundle bundle;
+    private final Robot robot = new Robot();
 
     public MainApplicationFrame(ResourceBundle defaultBundle, int inset) {
         //Make the big window be indented 50 pixels from each edge
@@ -42,11 +44,7 @@ public class MainApplicationFrame extends JFrame {
 
         addWindow(createLogWindow());
 
-
-//        GameWindow gameWindow = new GameWindow(bundle);
-//        gameWindow.setSize(400, 400);
-//        addWindow(gameWindow);
-        addWindow(new GameWindow(bundle, 400, 400));
+        addWindow(new GameWindow(bundle, 400, 400, robot));
 
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
