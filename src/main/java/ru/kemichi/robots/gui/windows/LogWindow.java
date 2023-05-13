@@ -42,7 +42,7 @@ public class LogWindow extends AbstractWindow implements LogChangeListener {
     private void updateLogContent() {
         StringBuilder content = new StringBuilder();
         for (LogEntry entry : logSource.all()) {
-            content.append(entry.getMessage()).append("\n");
+            content.append(entry.message()).append("\n");
         }
         logContent.setText(content.toString());
         logContent.invalidate();

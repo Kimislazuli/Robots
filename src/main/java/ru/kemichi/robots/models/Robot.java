@@ -1,10 +1,14 @@
 package ru.kemichi.robots.models;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.kemichi.robots.utility.DoublePoint;
 
 import java.awt.*;
 import java.util.Observable;
 
+@Getter
+@Setter
 public class Robot extends Observable {
     private final DoublePoint robotPosition = new DoublePoint(100, 100);
     private volatile double robotDirection = 0;
@@ -15,18 +19,6 @@ public class Robot extends Observable {
 
     private static final double maxVelocity = 0.1;
     private static final double maxAngularVelocity = 0.001;
-
-    public DoublePoint getRobotPosition() {
-        return robotPosition;
-    }
-
-    public double getRobotDirection() {
-        return robotDirection;
-    }
-
-    public Point getTargetPosition() {
-        return targetPosition;
-    }
 
     private static double distance(Point target, DoublePoint robot) {
         double diffX = target.getX() - robot.getX();
