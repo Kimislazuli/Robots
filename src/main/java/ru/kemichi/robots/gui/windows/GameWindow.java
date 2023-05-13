@@ -27,8 +27,7 @@ public class GameWindow extends AbstractWindow {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                Dimension size = panel.getSize();
-                visualizer.setWindowDimension(size);
+                visualizer.setWindowDimension(panel.getSize());
             }
         }, 0, 1);
     }
