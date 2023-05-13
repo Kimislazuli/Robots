@@ -1,5 +1,6 @@
 package ru.kemichi.robots.gui;
 
+import lombok.Setter;
 import ru.kemichi.robots.models.Robot;
 
 import java.awt.*;
@@ -14,11 +15,7 @@ import javax.swing.JPanel;
 public class GameVisualizer extends JPanel{
     private final Robot robot;
 
-    private Dimension windowDimension = new Dimension(0, 0);
-
-    public void setWindowDimension(Dimension windowDimension) {
-        this.windowDimension = windowDimension;
-    }
+    @Setter private Dimension windowDimension = new Dimension(0, 0);
 
     private static Timer initTimer() {
         return new Timer("events generator", true);
