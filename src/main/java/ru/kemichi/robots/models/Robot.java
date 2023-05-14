@@ -39,14 +39,14 @@ public class Robot extends Observable {
     }
 
     private double calculateAngularVelocity(double angle) {
-        double diff = robotDirection - angle;
+        double diff = angle - robotDirection;
         if (robotDirection >= Math.PI) {
             if (diff < Math.PI & angle < robotDirection) {
                 return -maxAngularVelocity;
             }
             return maxAngularVelocity;
             }
-        else if (10e-7 >= Math.abs(diff)) {
+        else if (0 >= Math.abs(diff)) {
             return 0;
         }
         else {
@@ -68,12 +68,6 @@ public class Robot extends Observable {
         double angleToTarget = angleTo(targetPosition, robotPosition);
         angle = asNormalizedRadians(angleToTarget - robotDirection);
         double angularVelocity = calculateAngularVelocity(angleToTarget);
-        if (angleToTarget > robotDirection) {
-            angularVelocity = maxAngularVelocity;
-        }
-        if (angleToTarget < robotDirection) {
-            angularVelocity = -maxAngularVelocity;
-        }
 
         moveRobot(maxVelocity, angularVelocity, windowDimension);
     }
