@@ -13,8 +13,6 @@ public class Robot extends Observable {
     private final DoublePoint robotPosition = new DoublePoint(100, 100);
     private volatile double robotDirection = 0;
     private double angle = 0;
-
-
     private volatile Point targetPosition = new Point(150, 100);
 
     private static final double maxVelocity = 0.1;
@@ -106,6 +104,20 @@ public class Robot extends Observable {
         }
         if (windowDimension.height != 0) {
             robotPosition.setY(applyLimits(robotPosition.getY(), windowDimension.height));
+        }
+
+        if (robotPosition.getX() == 0) {
+            robotPosition.setX(windowDimension.width);
+        }
+        else if (robotPosition.getX()== windowDimension.width) {
+            robotPosition.setX(0);
+        }
+
+        if (robotPosition.getY() == 0) {
+            robotPosition.setY(windowDimension.height);
+        }
+        else if (robotPosition.getY()== windowDimension.height) {
+            robotPosition.setY(0);
         }
 
         setChanged();
