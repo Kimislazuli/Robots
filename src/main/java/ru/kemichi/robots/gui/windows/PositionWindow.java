@@ -1,6 +1,6 @@
 package ru.kemichi.robots.gui.windows;
 
-import ru.kemichi.robots.models.Robot;
+import ru.kemichi.robots.models.Game;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,28 +10,28 @@ import java.util.ResourceBundle;
 public class PositionWindow extends AbstractWindow{
     private final TextArea textArea = new TextArea();
     private final ResourceBundle bundle;
-    private final Robot robot;
-    public PositionWindow(ResourceBundle bundle, Robot robot) {
+    private final Game game;
+    public PositionWindow(ResourceBundle bundle, Game game) {
         super(null, bundle.getString("positionWindowHeader"), true, true, true, true);
         this.bundle = bundle;
-        this.robot = robot;
+        this.game = game;
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(textArea, BorderLayout.CENTER);
         updateTextArea();
         getContentPane().add(panel);
-        robot.addObserver((o, arg) -> updateTextArea());
+        game.addObserver((o, arg) -> updateTextArea());
         pack();
     }
 
     private void updateTextArea() {
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
         String text = bundle.getString("robotPosition") + "\n"
-                + decimalFormat.format(robot.getRobotPosition().getX())
+                + decimalFormat.format(game.getRobotPosition().getX())
                 + " "
-                + decimalFormat.format(robot.getRobotPosition().getY())
+                + decimalFormat.format(game.getRobotPosition().getY())
                 + "\n"
                 + bundle.getString("targetPosition") + "\n"
-                + robot.getTargetPosition().getX() + " " + robot.getTargetPosition().getY();
+                + game.getTargetPosition().getX() + " " + game.getTargetPosition().getY();
         textArea.setText(text);
     }
 

@@ -2,14 +2,15 @@ package ru.kemichi.robots.models;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.kemichi.robots.utility.DoublePoint;
+import ru.kemichi.robots.utility.data_classes.DoublePoint;
+import ru.kemichi.robots.utility.functional_methods.GeometryKeeper;
 
 import java.awt.*;
 import java.util.Observable;
 
 @Getter
 @Setter
-public class Robot extends Observable {
+public class Game extends Observable {
     private final DoublePoint robotPosition = new DoublePoint(100, 100);
     private volatile double robotDirection = 0;
     private double angle = 0;
@@ -18,19 +19,6 @@ public class Robot extends Observable {
     private static final double maxVelocity = 0.1;
     private static final double maxAngularVelocity = 0.001;
 
-    private static double distance(Point target, DoublePoint robot) {
-        double diffX = target.getX() - robot.getX();
-        double diffY = target.getY() - robot.getY();
-        return Math.sqrt(diffX * diffX + diffY * diffY);
-    }
-
-    private static double angleTo(Point target, DoublePoint robot) {
-        double diffX = target.getX() - robot.getX();
-        double diffY = target.getY() - robot.getY();
-
-        return asNormalizedRadians(Math.atan2(diffY, diffX));
-    }
-
     public void setTargetPosition(Point p) {
         targetPosition = p;
         setChanged();
@@ -38,36 +26,17 @@ public class Robot extends Observable {
         clearChanged();
     }
 
-    private double calculateAngularVelocity(double angle) {
-        double diff = angle - robotDirection;
-        if (robotDirection >= Math.PI) {
-            if (diff < Math.PI & angle < robotDirection) {
-                return -maxAngularVelocity;
-            }
-            return maxAngularVelocity;
-            }
-        else if (0 >= Math.abs(diff)) {
-            return 0;
-        }
-        else {
-            if (robotDirection < angle & diff > -Math.PI) {
-                return maxAngularVelocity;
-            }
-            return -maxAngularVelocity;
-        }
-    }
-
     public void onModelUpdateEvent(Dimension windowDimension) {
-        double distance = distance(targetPosition, robotPosition);
+        double distance = GeometryKeeper.distance(targetPosition, robotPosition);
         if (distance < 0.5) {
             setChanged();
             notifyObservers();
             clearChanged();
             return;
         }
-        double angleToTarget = angleTo(targetPosition, robotPosition);
-        angle = asNormalizedRadians(angleToTarget - robotDirection);
-        double angularVelocity = calculateAngularVelocity(angleToTarget);
+        double angleToTarget = GeometryKeeper.angleTo(targetPosition, robotPosition);
+        angle = GeometryKeeper.asNormalizedRadians(angleToTarget - robotDirection);
+        double angularVelocity = GeometryKeeper.calculateAngularVelocity(angleToTarget, robotDirection, maxAngularVelocity);
 
         moveRobot(maxVelocity, angularVelocity, windowDimension);
     }
@@ -78,18 +47,9 @@ public class Robot extends Observable {
         return Math.min(value, max);
     }
 
-    private static double asNormalizedRadians(double angle) {
-        while (angle < 0) {
-            angle += 2 * Math.PI;
-        }
-        while (angle >= 2 * Math.PI) {
-            angle -= 2 * Math.PI;
-        }
-        return angle;
-    }
     private void moveRobot(double velocity, double angularVelocity, Dimension windowDimension) {
         velocity = applyLimits(velocity, maxVelocity);
-        robotDirection = asNormalizedRadians(robotDirection + Math.min(angularVelocity, angle) * 10);
+        robotDirection = GeometryKeeper.asNormalizedRadians(robotDirection + Math.min(angularVelocity, angle) * 10);
         robotPosition.setX(robotPosition.getX() + velocity * 10 * Math.cos(robotDirection));
         robotPosition.setY(robotPosition.getY() + velocity * 10 * Math.sin(robotDirection));
 

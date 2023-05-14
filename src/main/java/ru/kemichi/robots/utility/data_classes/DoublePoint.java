@@ -1,4 +1,4 @@
-package ru.kemichi.robots.utility;
+package ru.kemichi.robots.utility.data_classes;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,7 +1,7 @@
 package ru.kemichi.robots.gui;
 
 import lombok.Setter;
-import ru.kemichi.robots.models.Robot;
+import ru.kemichi.robots.models.Game;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -13,7 +13,7 @@ import java.util.TimerTask;
 import javax.swing.JPanel;
 
 public class GameVisualizer extends JPanel{
-    private final Robot robot;
+    private final Game game;
 
     @Setter private Dimension windowDimension = new Dimension(0, 0);
 
@@ -21,8 +21,8 @@ public class GameVisualizer extends JPanel{
         return new Timer("events generator", true);
     }
 
-    public GameVisualizer(Robot robot) {
-        this.robot = robot;
+    public GameVisualizer(Game game) {
+        this.game = game;
         Timer timer = initTimer();
         timer.schedule(new TimerTask() {
             @Override
@@ -33,13 +33,13 @@ public class GameVisualizer extends JPanel{
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                robot.onModelUpdateEvent(windowDimension);
+                game.onModelUpdateEvent(windowDimension);
             }
         }, 0, 10);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                robot.setTargetPosition(e.getPoint());
+                game.setTargetPosition(e.getPoint());
                 repaint();
             }
         });
@@ -58,8 +58,8 @@ public class GameVisualizer extends JPanel{
     public void paint(Graphics g) {
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
-        drawRobot(g2d, robot.getRobotDirection());
-        drawTarget(g2d, robot.getTargetPosition().x, robot.getTargetPosition().y);
+        drawRobot(g2d, game.getRobotDirection());
+        drawTarget(g2d, game.getTargetPosition().x, game.getTargetPosition().y);
     }
 
     private static void fillOval(Graphics g, int centerX, int centerY, int diam1, int diam2) {
@@ -71,8 +71,8 @@ public class GameVisualizer extends JPanel{
     }
 
     private void drawRobot(Graphics2D g, double direction) {
-        int robotCenterX = round(robot.getRobotPosition().getX());
-        int robotCenterY = round(robot.getRobotPosition().getY());
+        int robotCenterX = round(game.getRobotPosition().getX());
+        int robotCenterY = round(game.getRobotPosition().getY());
         AffineTransform t = AffineTransform.getRotateInstance(direction, robotCenterX, robotCenterY);
         g.setTransform(t);
         g.setColor(Color.MAGENTA);
